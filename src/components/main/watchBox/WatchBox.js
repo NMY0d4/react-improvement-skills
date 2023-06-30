@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import WatchedSummary from './WatchedSummary';
 import WatchedMoviesList from './WatchedMoviesList';
 
-const WatchBox = ({ movies, tempWatchedData }) => {
+const WatchBox = ({ tempWatchedData }) => {
   const [isOpen2, setIsOpen2] = useState(true);
   const [watched, setWatched] = useState(tempWatchedData);
 
