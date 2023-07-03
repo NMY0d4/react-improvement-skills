@@ -8,6 +8,7 @@ import WatchedSummary from './components/main/watchBox/WatchedSummary';
 import WatchedMoviesList from './components/main/watchBox/WatchedMoviesList';
 import Logo from './components/navbar/Logo';
 import Search from './components/navbar/Search';
+import Loader from './components/ui/Loader';
 
 const tempMovieData = [
   {
@@ -59,17 +60,20 @@ const tempWatchedData = [
 export default function App() {
   const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const query = 'interstellar';
 
   console.log('render');
 
   useEffect(() => {
     const fetchMovies = async () => {
+      setIsLoading(true);
       const res = await fetch(
         `http://www.omdbapi.com/?apikey=${process.env.REACT_APP_OMDB_API_KEY}&s=${query}`
       );
       const data = await res.json();
       setMovies(data.Search);
+      setIsLoading(false);
     };
     fetchMovies();
   }, []);
@@ -82,9 +86,7 @@ export default function App() {
         <NumResults movies={movies} />
       </NavBar>
       <Main movies={movies} tempWatchedData={tempWatchedData}>
-        <Box>
-          <MovieList movies={movies} />
-        </Box>
+        <Box>{isLoading ? <Loader /> : <MovieList movies={movies} />}</Box>
         <Box>
           <WatchedSummary tempWatchedData={tempWatchedData} watched={watched} />
           <WatchedMoviesList watched={watched} />
