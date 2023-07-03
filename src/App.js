@@ -59,15 +59,19 @@ const tempWatchedData = [
 export default function App() {
   const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState([]);
+  const query = 'interstellar';
 
   console.log('render');
 
   useEffect(() => {
-    fetch(
-      `http://www.omdbapi.com/?apikey=${process.env.REACT_APP_OMDB_API_KEY}&s=interstellar`
-    )
-      .then((res) => res.json())
-      .then((data) => setMovies(data.Search));
+    const fetchMovies = async () => {
+      const res = await fetch(
+        `http://www.omdbapi.com/?apikey=${process.env.REACT_APP_OMDB_API_KEY}&s=${query}`
+      );
+      const data = await res.json();
+      setMovies(data.Search);
+    };
+    fetchMovies();
   }, []);
 
   return (
