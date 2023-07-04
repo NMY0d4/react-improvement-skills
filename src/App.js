@@ -10,6 +10,7 @@ import Logo from './components/navbar/Logo';
 import Search from './components/navbar/Search';
 import Loader from './components/ui/Loader';
 import ErrorMessage from './components/ui/ErrorMessage';
+import MovieDetails from './components/main/watchBox/MovieDetails';
 
 const tempMovieData = [
   {
@@ -59,14 +60,23 @@ const tempWatchedData = [
 ];
 
 export default function App() {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState('inception');
   const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [selectedId, setSelectedId] = useState(null);
   const tempQuery = 'interstellar';
 
   // console.log('render');
+
+  function handleSelectMovie(id) {
+    setSelectedId((prev) => (prev === id ? null : id));
+  }
+
+  function handleCloseMovie() {
+    setSelectedId(null);
+  }
 
   useEffect(() => {
     const fetchMovies = async () => {
@@ -111,11 +121,25 @@ export default function App() {
           {/* {isLoading ? <Loader /> : <MovieList movies={movies} />} */}
           {isLoading && <Loader />}
           {error && <ErrorMessage message={error} />}
-          {!isLoading && !error && <MovieList movies={movies} />}
+          {!isLoading && !error && (
+            <MovieList movies={movies} onSelectMovie={handleSelectMovie} />
+          )}
         </Box>
         <Box>
-          <WatchedSummary tempWatchedData={tempWatchedData} watched={watched} />
-          <WatchedMoviesList watched={watched} />
+          {selectedId ? (
+            <MovieDetails
+              selectedId={selectedId}
+              onCloseMovie={handleCloseMovie}
+            />
+          ) : (
+            <>
+              <WatchedSummary
+                tempWatchedData={tempWatchedData}
+                watched={watched}
+              />
+              <WatchedMoviesList watched={watched} />
+            </>
+          )}
         </Box>
       </Main>
     </>
