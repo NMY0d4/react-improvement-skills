@@ -8,14 +8,19 @@ function MovieDetails({
   onCloseMovie,
   onAddWatched,
   watchedMovies,
+  onDeleteWatched,
 }) {
   const [movie, setMovie] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [userRating, setUserRating] = useState('');
-  const [isInTheList, setIsInTheList] = useState('');
 
-  const watchedIds = watchedMovies?.map((wm) => wm.imdbID);
+  const isInTheList = watchedMovies
+    ?.map((wm) => wm.imdbID)
+    .includes(selectedId);
+  const watchedUserRating = watchedMovies.find(
+    (movie) => movie.imdbID === selectedId
+  )?.userRating;
 
   const {
     Title: title,
@@ -40,12 +45,6 @@ function MovieDetails({
       runtime: +runtime.split(' ').at(0),
       userRating,
     };
-    if (watchedIds.includes(selectedId)) {
-      setIsInTheList(
-        `${newWatchMovie.title} already in the list(rating: ${userRating})`
-      );
-      return;
-    }
 
     onAddWatched(newWatchMovie);
     onCloseMovie();
@@ -116,7 +115,9 @@ function MovieDetails({
                   )}
                 </>
               ) : (
-                <p>You rated with movie</p>
+                <p>
+                  You rated with movie {watchedUserRating} <span>⭐</span>
+                </p>
               )}
             </div>
 
