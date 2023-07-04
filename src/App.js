@@ -59,17 +59,19 @@ const tempWatchedData = [
 ];
 
 export default function App() {
+  const [query, setQuery] = useState('');
   const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const query = 'dfgsdf';
+  const tempQuery = 'interstellar';
 
-  console.log('render');
+  // console.log('render');
 
   useEffect(() => {
     const fetchMovies = async () => {
       try {
+        setError('');
         setIsLoading(true);
         const res = await fetch(
           `http://www.omdbapi.com/?apikey=${process.env.REACT_APP_OMDB_API_KEY}&s=${query}`
@@ -80,7 +82,7 @@ export default function App() {
         }
         const data = await res.json();
 
-        if (data.Response === 'False') throw new Error(data.Error);
+        if (data.Response === 'False') throw new Error('Movie not found');
         setMovies(data.Search);
       } catch (err) {
         console.error(`ICI ---> ${err.message}`);
@@ -89,14 +91,19 @@ export default function App() {
         setIsLoading(false);
       }
     };
+    if (query.length < 3) {
+      setMovies([]);
+      setError('');
+      return;
+    }
     fetchMovies();
-  }, []);
+  }, [query]);
 
   return (
     <>
       <NavBar>
         <Logo />
-        <Search />
+        <Search query={query} setQuery={setQuery} />
         <NumResults movies={movies} />
       </NavBar>
       <Main movies={movies} tempWatchedData={tempWatchedData}>
