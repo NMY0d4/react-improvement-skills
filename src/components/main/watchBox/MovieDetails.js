@@ -8,7 +8,6 @@ function MovieDetails({
   onCloseMovie,
   onAddWatched,
   watchedMovies,
-  onDeleteWatched,
 }) {
   const [movie, setMovie] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -51,6 +50,7 @@ function MovieDetails({
   }
 
   useEffect(() => {
+    const controller = new AbortController();
     async function getMovieDetails() {
       try {
         setError('');
@@ -80,6 +80,11 @@ function MovieDetails({
   useEffect(() => {
     if (!title) return;
     document.title = `Movie | ${title}`;
+
+    return function () {
+      document.title = 'usePopcorn';
+      console.log(`Clean up effect for movie ${title}`);
+    };
   }, [title]);
 
   return (
