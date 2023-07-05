@@ -49,8 +49,23 @@ function MovieDetails({
     onCloseMovie();
   }
 
+  useEffect(
+    function () {
+      const callback = (e) => {
+        if (e.code === 'Escape') {
+          onCloseMovie();
+        }
+      };
+      document.addEventListener('keydown', callback);
+
+      return function () {
+        document.removeEventListener('keydown', callback);
+      };
+    },
+    [onCloseMovie]
+  );
+
   useEffect(() => {
-    const controller = new AbortController();
     async function getMovieDetails() {
       try {
         setError('');
@@ -66,7 +81,6 @@ function MovieDetails({
 
         if (data.Response === 'False') throw new Error('Movie not found');
         setMovie(data);
-        // console.log(data);
       } catch (err) {
         console.error(`ICI ---> ${err.message}`);
         setError(err.message);
@@ -83,7 +97,7 @@ function MovieDetails({
 
     return function () {
       document.title = 'usePopcorn';
-      console.log(`Clean up effect for movie ${title}`);
+      // console.log(`Clean up effect for movie ${title}`);
     };
   }, [title]);
 
