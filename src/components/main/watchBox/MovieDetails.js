@@ -34,6 +34,9 @@ function MovieDetails({
     imdbRating,
   } = movie;
 
+  /* eslint-disable */
+  // if (imdbRating > 8) [isTop, setIsTop] = useState(true);
+
   function handleAdd() {
     const newWatchMovie = {
       imdbID: selectedId,
