@@ -11,13 +11,14 @@ import Search from './components/navbar/Search';
 import Loader from './components/ui/Loader';
 import ErrorMessage from './components/ui/ErrorMessage';
 import MovieDetails from './components/main/watchBox/MovieDetails';
+import { useMovies } from './useMovies';
 
 export default function App() {
   const [query, setQuery] = useState('');
-  const [movies, setMovies] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
   const [selectedId, setSelectedId] = useState(null);
+
+  const { movies, isLoading, error } = useMovies(query, handleCloseMovie);
+
   const [watched, setWatched] = useState(() => {
     const storedValue = localStorage.getItem('watched');
     return JSON.parse(storedValue);
@@ -45,50 +46,6 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem('watched', JSON.stringify(watched));
   }, [watched]);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    const fetchMovies = async () => {
-      try {
-        setError('');
-        setIsLoading(true);
-        const res = await fetch(
-          `http://www.omdbapi.com/?apikey=${process.env.REACT_APP_OMDB_API_KEY}&s=${query}`,
-          {
-            signal: controller.signal,
-          }
-        );
-
-        if (!res.ok) {
-          throw new Error('Something went wrong with fetching movies');
-        }
-        const data = await res.json();
-
-        if (data.Response === 'False') throw new Error('Movie not found');
-        setMovies(data.Search);
-        setError('');
-      } catch (err) {
-        if (err.name !== 'AbortError') {
-          console.error(`ICI ---> ${err.message}`);
-          setError(err.message);
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    if (query.length < 3) {
-      setMovies([]);
-      setError('');
-      return;
-    }
-
-    handleCloseMovie();
-    fetchMovies();
-
-    return () => {
-      controller.abort();
-    };
-  }, [query]);
 
   return (
     <>
