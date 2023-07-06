@@ -1,6 +1,4 @@
-import React, { useState } from 'react';
-import ListBox from './movieListBox/ListBox';
-import WatchBox from './watchBox/WatchBox';
+import React from 'react';
 
 const Main = ({ children }) => {
   return <main className='main'>{children}</main>;
