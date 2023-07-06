@@ -12,6 +12,7 @@ import Loader from './components/ui/Loader';
 import ErrorMessage from './components/ui/ErrorMessage';
 import MovieDetails from './components/main/watchBox/MovieDetails';
 import { useMovies } from './useMovies';
+import { useLocalStorageState } from './useLocalStorageState';
 
 export default function App() {
   const [query, setQuery] = useState('');
@@ -19,12 +20,7 @@ export default function App() {
 
   const { movies, isLoading, error } = useMovies(query, handleCloseMovie);
 
-  const [watched, setWatched] = useState(() => {
-    const storedValue = localStorage.getItem('watched');
-    return JSON.parse(storedValue);
-  });
-
-  // console.log('render');
+  const [watched, setWatched] = useLocalStorageState([], 'watched');
 
   function handleSelectMovie(id) {
     setSelectedId((prev) => (prev === id ? null : id));
@@ -42,10 +38,6 @@ export default function App() {
   function handleDeleteWatched(id) {
     setWatched((watched) => watched.filter((w) => w.imdbID !== id));
   }
-
-  useEffect(() => {
-    localStorage.setItem('watched', JSON.stringify(watched));
-  }, [watched]);
 
   return (
     <>
